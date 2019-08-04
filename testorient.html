@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <title> Test Screen Orientation</title>
+    <style>
+body, div {
+font-size: 24pt;
+font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+#error {
+color: red;
+}
+    </style>
+<script type="text/javascript">
+function getScreenOrientationAngle(defaultangle) {
+	if (!isNaN(window.orientation)) {
+		return window.orientation; //non-standard, for Safari and some Android
+	} else if (!isNaN(screen.orientation.angle)) {
+		return screen.orientation.angle; //W3C standard
+	} else {
+		return defaultangle; //default to primary landscape.
+	}
+}
+
+function setScreenOrientationAngle() {
+document.getElementById('screenorientation').innerHTML=getScreenOrientationAngle();
+}
+
+</script>
+</head>
+<body>
+<div> Test Orientation </div>
+<div> <button onclick="document.getElementById('screenorientation').innerHTML=screen.orientation.angle;">screen.orientation.angle</button> </div>
+<div>  <button onclick="document.getElementById('screenorientation').innerHTML=window.orientation;">window.orientation</button> </div>
+<div>  <button onclick="document.getElementById('screenorientation').innerHTML=getScreenOrientationAngle(90);">getScreenOrientationAngle()</button> </div>
+<div> Orientation: <span id='screenorientation'> </span> </div>
+<div>  <button onclick="document.getElementById('screenorientation').innerHTML='Reset'">Reset</button> </div>
+
+</body>
+</html>

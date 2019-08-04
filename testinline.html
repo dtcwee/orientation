@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <title> Gyronorm.js Test </title>
+    <style>
+body, div {
+font-size: 24pt;
+font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+#error {
+color: red;
+}
+    </style>
+<script type="text/javascript" src="./gyronorm.js/dist/gyronorm.complete.min.js"></script>
+<script type="text/javascript">
+/**
+ * Rotation Matrix functions
+ * Convert Yaw/alpha/Z, Pitch/beta/X, Roll/gamma/Y to and from rotation matrix, apply transformations
+ *
+ * @author Rich Tibbett <https://dev.opera.com/articles/w3c-device-orientation-usage/>, Nghia Ho <http://nghiaho.com/?page_id=846>, Derek Wee
+ * @copyright
+ * @version 0.1
+ * @license
+ */
+var degtorad = Math.PI / 180; // Degree-to-Radian conversion
+var worldOrientation = 90;
+var screenOrientation = 0;
+
+//R.1: Converting deviceorientation angles to a Rotation Matrix representation
+function getBaseRotationMatrix(alpha, beta, gamma) {
+	var _x = beta ? beta * degtorad : 0; // beta value
+	var _y = gamma ? gamma * degtorad : 0; // gamma value
+	var _z = alpha ? alpha * degtorad : 0; // alpha value
+
+	var cX = Math.cos(_x);
+	var cY = Math.cos(_y);
+	var cZ = Math.cos(_z);
+	var sX = Math.sin(_x);
+	var sY = Math.sin(_y);
+	var sZ = Math.sin(_z);
+
+	//
+	// ZXY-ordered rotation matrix construction.
+	//
+
+	var m11 = cZ * cY - sZ * sX * sY;
+	var m12 =  - cX * sZ;
+	var m13 = cY * sZ * sX + cZ * sY;
+
+	var m21 = cY * sZ + cZ * sX * sY;
+	var m22 = cZ * cX;
+	var m23 = sZ * sY - cZ * cY * sX;
+
+	var m31 =  - cX * sY;
+	var m32 = sX;
+	var m33 = cX * cY;
+
+	return [
+		m11, m12, m13,
+		m21, m22, m23,
+		m31, m32, m33
+	];
+};
+
+//R.2: Fixing our rotation matrix frame relative to the current screen orientation
+function getScreenTransformationMatrix(screenOrientation) {
+	var orientationAngle = screenOrientation ? screenOrientation * degtorad : 0;
+
+	var cA = Math.cos(orientationAngle);
+	var sA = Math.sin(orientationAngle);
+
+	// Construct our screen transformation matrix
+	var r_s = [
+		cA, -sA, 0,
+		sA, cA, 0,
+		0, 0, 1
+	];
+
+	return r_s;
+}
+
+//R.3: Fix our rotation matrix frame relative to our application’s world orientation (rotation around x-axis)
+function getWorldTransformationMatrix() {
+	var x = 90 * degtorad;
+
+	var cA = Math.cos(x);
+	var sA = Math.sin(x);
+
+	// Construct our world transformation matrix
+	var r_w = [
+		1, 0, 0,
+		0, cA, -sA,
+		0, sA, cA
+	];
+
+	return r_w;
+}
+
+//R.4: Computing our final rotation matrix representation
+function matrixMultiply(a, b) {
+	var final = [];
+
+	final[0] = a[0] * b[0] + a[1] * b[3] + a[2] * b[6];
+	final[1] = a[0] * b[1] + a[1] * b[4] + a[2] * b[7];
+	final[2] = a[0] * b[2] + a[1] * b[5] + a[2] * b[8];
+
+	final[3] = a[3] * b[0] + a[4] * b[3] + a[5] * b[6];
+	final[4] = a[3] * b[1] + a[4] * b[4] + a[5] * b[7];
+	final[5] = a[3] * b[2] + a[4] * b[5] + a[5] * b[8];
+
+	final[6] = a[6] * b[0] + a[7] * b[3] + a[8] * b[6];
+	final[7] = a[6] * b[1] + a[7] * b[4] + a[8] * b[7];
+	final[8] = a[6] * b[2] + a[7] * b[5] + a[8] * b[8];
+
+	return final;
+}
+
+//Returns a 3 x 3 rotation matrix as an array
+function computeMatrix(alpha, beta, gamma, currentScreenOrientation) {
+	var rotationMatrix = getBaseRotationMatrix(
+			alpha,
+			beta,
+			gamma); // R
+
+	var screenTransform = getScreenTransformationMatrix(currentScreenOrientation); // r_s
+
+	var screenAdjustedMatrix = matrixMultiply(rotationMatrix, screenTransform); // R_s
+
+	var worldTransform = getWorldTransformationMatrix(); // r_w
+
+	var finalMatrix = matrixMultiply(screenAdjustedMatrix, worldTransform); // R_w
+
+	return finalMatrix; // [ m11, m12, m13, m21, m22, m23, m31, m32, m33 ]
+}
+
+//Decomposes a 3 x 3 rotation matrix into an array containing Yaw/alpha/Z Pitch/beta/X Roll/gamma/Y
+function getYawPitchRoll(rotationMatrix) {
+	var rm11 = rotationMatrix[0];
+	var rm12 = rotationMatrix[1];
+	var rm13 = rotationMatrix[2];
+	var rm21 = rotationMatrix[3];
+	var rm22 = rotationMatrix[4];
+	var rm23 = rotationMatrix[5];
+	var rm31 = rotationMatrix[6];
+	var rm32 = rotationMatrix[7];
+	var rm33 = rotationMatrix[8];
+
+	var yaw = Math.atan2(rm21, rm11);
+	var pitch = Math.atan2(rm32, rm33);
+	var roll = Math.atan2(rm31, Math.sqrt(Math.pow(rm32, 2) + Math.pow(rm33, 2)));
+
+	return [yaw, pitch, roll]; //[yaw, pitch, roll]
+}
+</script>
+<script type="text/javascript">
+var alpha = 0.0;
+var beta = 0.0;
+var gamma = 0.0;
+var radtodeg = 180 / Math.PI;
+try {
+	//var currentScreenOrientation = screen.orientation.angle || 0; // active default
+	var currentScreenOrientation = getScreenOrientationAngle(90); 
+} catch (e) {
+	document.getElementById('error').innerHTML = "Init currentScreenOrientation error: " + e;
+}
+var rotatedYPR = [0.0,Math.PI/2,0.0];
+
+function getScreenOrientationAngle(defaultangle) {
+	if (!isNaN(window.orientation)) {
+		return window.orientation; //non-standard, for Safari and some Android
+	} else if (!isNaN(screen.orientation.angle)) {
+		return screen.orientation.angle; //W3C standard
+	} else {
+		return defaultangle; //default to primary landscape.
+	}
+}
+
+var args = {
+    frequency:100,                   // ( How often the object sends the values - milliseconds )
+    gravityNormalized:true,         // ( If the garvity related values to be normalized )
+    orientationBase:GyroNorm.GAME,      // ( Can be GyroNorm.GAME or GyroNorm.WORLD. gn.GAME returns orientation values with respect to the head direction of the device. gn.WORLD returns the orientation values with respect to the actual north direction of the world. )
+    decimalCount:2,                 // ( How many digits after the decimal point will there be in the return values )
+    logger:null,                    // ( Function to be called to log messages from gyronorm.js )
+    screenAdjusted:false            // ( If set to true it will return screen adjusted values. )
+};
+    var gn = new GyroNorm();
+gn.init(args).then(function(){
+        gn.start(function(data){
+            // Process:
+            // data.do.alpha    ( deviceorientation event alpha value )
+            // data.do.beta     ( deviceorientation event beta value )
+            // data.do.gamma    ( deviceorientation event gamma value )
+            // data.do.absolute ( deviceorientation event absolute value )
+
+            // data.dm.x        ( devicemotion event acceleration x value )
+            // data.dm.y        ( devicemotion event acceleration y value )
+            // data.dm.z        ( devicemotion event acceleration z value )
+
+            // data.dm.gx       ( devicemotion event accelerationIncludingGravity x value )
+            // data.dm.gy       ( devicemotion event accelerationIncludingGravity y value )
+            // data.dm.gz       ( devicemotion event accelerationIncludingGravity z value )
+
+            // data.dm.alpha    ( devicemotion event rotationRate alpha value )
+            // data.dm.beta     ( devicemotion event rotationRate beta value )
+            // data.dm.gamma    ( devicemotion event rotationRate gamma value )
+			alpha = data.do.alpha;
+			beta = data.do.beta;
+			gamma = data.do.gamma;
+			doLoop();
+        });
+    }).catch(function(e){
+      // Catch if the DeviceOrientation or DeviceMotion is not supported by the browser or device
+	  document.getElementById('error').innerHTML = e + ", trying lower-level access.";
+		window.ondeviceorientation = function(event) {
+		deviceOrientationData = event;
+		alpha = deviceOrientationData.alpha;
+		beta = deviceOrientationData.beta;
+		gamma = deviceOrientationData.gamma;
+		doLoop();
+		}
+	  
+    })
+	
+function doLoop() {
+	document.getElementById('alpha').innerHTML = (alpha).toFixed(2);
+	document.getElementById('beta').innerHTML = (beta).toFixed(2);
+	document.getElementById('gamma').innerHTML = (gamma).toFixed(2);
+	try {
+		var rotationMatrix = computeMatrix(alpha, beta, gamma, currentScreenOrientation);
+	} catch (e) {
+		document.getElementById('error').innerHTML = "computeMatrix error: " + e;
+	}
+	try {
+		rotatedYPR = getYawPitchRoll(rotationMatrix);
+	} catch (e) {
+		document.getElementById('error').innerHTML = "getYawPitchRoll error: " + e;
+	}
+	document.getElementById('finalAlpha').innerHTML = (rotatedYPR[0] * radtodeg).toFixed(2);
+	document.getElementById('finalBeta').innerHTML = (rotatedYPR[1] * radtodeg).toFixed(2);
+	document.getElementById('finalGamma').innerHTML = (rotatedYPR[2] * radtodeg).toFixed(2);
+}
+</script>
+</head>
+<body>
+<div> Gyronorm </div>
+<div> Yaw-&alpha;: <span id='alpha'>&deg; </span> (final:) <span id='finalAlpha'> </span>&deg; </div>
+<div> Pitch-&beta;: <span id='beta'>&deg; </span> (final:) <span id='finalBeta'> </span>&deg; </div>
+<div> Roll-&gamma;: <span id='gamma'>&deg; </span> (final:) <span id='finalGamma'> </span>&deg; </div>
+<div id='error'> </div>
+
+</body>
+</html>
