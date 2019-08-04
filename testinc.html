@@ -2,15 +2,13 @@
 <html lang="en">
   <head>
   <title> Gyronorm.js Test </title>
-    <style>
-body, div {
-font-size: 24pt;
-font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-}
-#error {
-color: red;
-}
-    </style>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- import the webpage's stylesheet -->
+  <link rel="stylesheet" href="/style.css">
 <script type="text/javascript" src="./gyronorm.js/dist/gyronorm.complete.min.js"></script>
 <script type="text/javascript" src="./rotationmatrix.js"></script>
 <script type="text/javascript">
@@ -75,7 +73,8 @@ function doLoop() {
 </script>
 </head>
 <body>
-<div> Gyronorm </div>
+<h1> Gyronorm </h1>
+<p>Test rotation matrix included script</p>
 <div> Yaw-&alpha;: <span id='alpha'>&deg; </span> (final:) <span id='finalAlpha'> </span>&deg; </div>
 <div> Pitch-&beta;: <span id='beta'>&deg; </span> (final:) <span id='finalBeta'> </span>&deg; </div>
 <div> Roll-&gamma;: <span id='gamma'>&deg; </span> (final:) <span id='finalGamma'> </span>&deg; </div>

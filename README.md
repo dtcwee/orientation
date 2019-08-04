@@ -1,4 +1,4 @@
-Welcome to Glitch
+Orientation Test
 =================
 
 Click `Show` in the header to see your app live. Updates to your code will instantly deploy and update live.
@@ -13,7 +13,7 @@ Your Project
 
 ### ← README.md
 
-That's this file, where you can tell people what your cool website does and how you built it.
+That's this file.
 
 ### ← index.html
 

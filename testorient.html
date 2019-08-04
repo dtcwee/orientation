@@ -1,40 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-  <title> Test Screen Orientation</title>
-    <style>
-body, div {
-font-size: 24pt;
-font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-}
-#error {
-color: red;
-}
-    </style>
-<script type="text/javascript">
-function getScreenOrientationAngle(defaultangle) {
-	if (!isNaN(window.orientation)) {
-		return window.orientation; //non-standard, for Safari and some Android
-	} else if (!isNaN(screen.orientation.angle)) {
-		return screen.orientation.angle; //W3C standard
-	} else {
-		return defaultangle; //default to primary landscape.
-	}
-}
 
-function setScreenOrientationAngle() {
-document.getElementById('screenorientation').innerHTML=getScreenOrientationAngle();
-}
+<head>
+	<title> Test Screen Orientation</title>
 
-</script>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- import the webpage's stylesheet -->
+	<link rel="stylesheet" href="/style.css">
+	<script type="text/javascript">
+		function getScreenOrientationAngle(defaultangle) {
+			if (!isNaN(window.orientation)) {
+				return window.orientation; //non-standard, for Safari and some Android
+			} else if (!isNaN(screen.orientation.angle)) {
+				return screen.orientation.angle; //W3C standard
+			} else {
+				return defaultangle; //default to primary landscape.
+			}
+		}
+
+		function setScreenOrientationAngle() {
+			document.getElementById('screenorientation').innerHTML = getScreenOrientationAngle();
+		}
+
+	</script>
 </head>
+
 <body>
-<div> Test Orientation </div>
-<div> <button onclick="document.getElementById('screenorientation').innerHTML=screen.orientation.angle;">screen.orientation.angle</button> </div>
-<div>  <button onclick="document.getElementById('screenorientation').innerHTML=window.orientation;">window.orientation</button> </div>
-<div>  <button onclick="document.getElementById('screenorientation').innerHTML=getScreenOrientationAngle(90);">getScreenOrientationAngle()</button> </div>
-<div> Orientation: <span id='screenorientation'> </span> </div>
-<div>  <button onclick="document.getElementById('screenorientation').innerHTML='Reset'">Reset</button> </div>
+	<h1> Test Orientation </h1>
+	<div> <button
+			onclick="document.getElementById('screenorientation').innerHTML=screen.orientation.angle;">screen.orientation.angle</button>
+	</div>
+	<div> <button
+			onclick="document.getElementById('screenorientation').innerHTML=window.orientation;">window.orientation</button>
+	</div>
+	<div> <button
+			onclick="document.getElementById('screenorientation').innerHTML=getScreenOrientationAngle(90);">getScreenOrientationAngle()</button>
+	</div>
+	<div> Orientation: <span id='screenorientation'> </span> </div>
+	<div> <button onclick="document.getElementById('screenorientation').innerHTML='Reset'">Reset</button> </div>
 
 </body>
+
 </html>
