@@ -51,17 +51,17 @@ gn.init(args).then(function(){
     }).catch(function(e){
       // Catch if the DeviceOrientation or DeviceMotion is not supported by the browser or device
 	  document.getElementById('error').innerHTML = e + ", trying lower-level access.";
-  		try {
-			currentScreenOrientation = screen.orientation.angle || 0; // active default
-			//var currentScreenOrientation = getScreenOrientationAngle(90);
-		} catch (e) {
-			document.getElementById('error').innerHTML = "Init currentScreenOrientation error: " + e;
-		}
 		window.ondeviceorientation = function(event) {
 		deviceOrientationData = event;
 		alpha = deviceOrientationData.alpha;
 		beta = deviceOrientationData.beta;
 		gamma = deviceOrientationData.gamma;
+    try {
+			currentScreenOrientation = screen.orientation.angle || 0; // active default
+			//var currentScreenOrientation = getScreenOrientationAngle(90);
+		} catch (e) {
+			document.getElementById('error').innerHTML = "Init currentScreenOrientation error: " + e;
+		}
 		doLoop();
 		}
 	  
@@ -73,15 +73,10 @@ function doLoop() {
 			document.getElementById('gamma').innerHTML = (gamma).toFixed(2);
 			var rotationMatrix = computeMatrix(alpha, beta, gamma, currentScreenOrientation);
 			rotatedYPR = getYawPitchRoll(rotationMatrix);
-			document.getElementById('finalAlpha').innerHTML = (rotatedYPR[0]*radtodeg).toFixed(2);
-			document.getElementById('finalBeta').innerHTML = (rotatedYPR[1]*radtodeg).toFixed(2);
-			document.getElementById('finalGamma').innerHTML = (rotatedYPR[2]*radtodeg).toFixed(2);
-    	try {
-			currentScreenOrientation = screen.orientation.angle || 0; // active default
-			//var currentScreenOrientation = getScreenOrientationAngle(90);
-		  } catch (e) {
-			document.getElementById('error').innerHTML = "Init currentScreenOrientation error: " + e;
-		  }
+			document.getElementById('finalAlpha').innerHTML = (rotatedYPR[0]/degtorad).toFixed(2);
+			document.getElementById('finalBeta').innerHTML = (rotatedYPR[1]/degtorad).toFixed(2);
+			document.getElementById('finalGamma').innerHTML = (rotatedYPR[2]/degtorad).toFixed(2);
+
 }
 </script>
 </head>
