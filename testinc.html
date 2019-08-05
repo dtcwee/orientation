@@ -64,21 +64,21 @@ function doLoop() {
 			document.getElementById('alpha').innerHTML = (alpha).toFixed(2);
 			document.getElementById('beta').innerHTML = (beta).toFixed(2);
 			document.getElementById('gamma').innerHTML = (gamma).toFixed(2);
-			//var rotationMatrix = computeMatrix(alpha, beta, gamma, currentScreenOrientation);
-			//rotatedYPR = getYawPitchRoll(rotationMatrix);
-			//document.getElementById('finalAlpha').innerHTML = (rotatedYPR[0]*radtodeg).toFixed(2);
-			//document.getElementById('finalBeta').innerHTML = (rotatedYPR[1]*radtodeg).toFixed(2);
-			//document.getElementById('finalGamma').innerHTML = (rotatedYPR[2]*radtodeg).toFixed(2);
+			var rotationMatrix = computeMatrix(alpha, beta, gamma, currentScreenOrientation);
+			rotatedYPR = getYawPitchRoll(rotationMatrix);
+			document.getElementById('finalAlpha').innerHTML = (rotatedYPR[0]*radtodeg).toFixed(2);
+			document.getElementById('finalBeta').innerHTML = (rotatedYPR[1]*radtodeg).toFixed(2);
+			document.getElementById('finalGamma').innerHTML = (rotatedYPR[2]*radtodeg).toFixed(2);
 }
 </script>
 </head>
 <body>
 <h1> Gyronorm </h1>
 <p>Test rotation matrix included script</p>
-<div> Yaw-&alpha;: <span id='alpha'>&deg; </span> (final:) <span id='finalAlpha'> </span>&deg; </div>
-<div> Pitch-&beta;: <span id='beta'>&deg; </span> (final:) <span id='finalBeta'> </span>&deg; </div>
-<div> Roll-&gamma;: <span id='gamma'>&deg; </span> (final:) <span id='finalGamma'> </span>&deg; </div>
-<div id='error'> </div>
+<div> Yaw-&alpha;: <span id="alpha">&deg; </span> (final:) <span id="finalAlpha"> </span>&deg; </div>
+<div> Pitch-&beta;: <span id="beta">&deg; </span> (final:) <span id="finalBeta"> </span>&deg; </div>
+<div> Roll-&gamma;: <span id="gamma">&deg; </span> (final:) <span id="finalGamma"> </span>&deg; </div>
+<div id="error"> </div>
 
 </body>
 </html>
