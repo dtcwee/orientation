@@ -1,37 +1,9 @@
 Orientation Test
 =================
 
-Click `Show` in the header to see your app live. Updates to your code will instantly deploy and update live.
+Several JS files for testing orientation sensors like the ones you find in mobile devices.
 
-**Glitch** is the friendly community where you'll build the app of your dreams. Glitch lets you instantly create, remix, edit, and host an app, bot or site, and you can invite collaborators or helpers to simultaneously edit code with you.
-
-Find out more [about Glitch](https://glitch.com/about).
-
-
-Your Project
-------------
-
-### ← README.md
-
-That's this file.
-
-### ← index.html
-
-Where you'll write the content of your website. 
-
-### ← style.css
-
-CSS files add styling rules to your content.
-
-### ← script.js
-
-If you're feeling fancy you can add interactivity to your site with JavaScript.
-
-### ← assets
-
-Drag in `assets`, like images or music, to add them to your project
-
-Made by [Glitch](https://glitch.com/)
--------------------
-
-\ ゜o゜)ノ
+1. Testing gyronorm.js - reading raw data from gyronorm.js library.
+2. Testing gyronorm.js library and a rotation matrix function in an include file.
+3. Testing gyronorm.js library and inline rotation matrix script.
+4. Testing different ways to read phone orientation.
